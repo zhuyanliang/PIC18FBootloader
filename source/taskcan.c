@@ -109,7 +109,7 @@ void CAN_ReceiveImage(void)
         flashWr64Bytes(g_flashAddr,g_Data);
         int lastLen = (g_FlashIndex - 64);
         g_FlashIndex = 0;
-        for(int i=0;i<lastLen;i++)
+        for(i=0;i<lastLen;i++)
         {
             g_Data[g_FlashIndex++] = g_Data[64+i];
         }
@@ -123,12 +123,18 @@ void CAN_ReceiveImage(void)
     }
     else
     {
+        int i = 0;
+        i++;
         SendResponse(CAN_MSG_REQ_AGAIN);
     }
 }
 
 void CAN_ReceiveOver(void)
 {
+	UINT16 crc = 0;
+    UINT8 getCrc = 0;
+    UINT8 len = 0;
+    
     while(g_FlashIndex < 64)
     {
         g_Data[g_FlashIndex++] = 0xff;
@@ -136,10 +142,23 @@ void CAN_ReceiveOver(void)
     flashWr64Bytes(g_flashAddr,g_Data);
     
     g_FlashIndex = 0;
+
+	getCrc = (unsigned char)((g_CanRxBuf.COB_ID >>8)&0xFF);
+    len = g_CanRxBuf.DLC;
+    if(len>0)
+        crc = calculate_crc8((UINT8*)&g_CanRxBuf.Data[0],len);
     
-    for(int i =0;i<64;i++)
+    if(getCrc == crc)
     {
-        g_Data[i] = 0xAA; // 前面11字节保存系统信息
+    	g_Data[0] = g_CanRxBuf.Data[0];
+	    g_Data[1] = g_CanRxBuf.Data[1];
+	    g_Data[2] = g_CanRxBuf.Data[2];
+	    g_Data[3] = g_CanRxBuf.Data[3];
+    }
+
+    for(int i =4;i<64;i++)
+    {
+        g_Data[i] = 0xAA; 
     }
     flashWr64Bytes(APP_HEADER,g_Data);
     

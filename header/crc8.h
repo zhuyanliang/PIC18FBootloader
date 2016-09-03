@@ -14,6 +14,7 @@ extern "C" {
     
 UINT8 calculate_crc8(UINT8* ptr, UINT8 len);
 UINT8 calculate_char_crc8(UINT8 crc, UINT8 nbyte);
+UINT16 ComputeCrc16(UINT8 *buffer, UINT16 lastcrc,UINT24 len);
 
 
 #ifdef	__cplusplus

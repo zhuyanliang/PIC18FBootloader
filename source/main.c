@@ -94,6 +94,8 @@ unsigned char g_FlashIndex = 0;
 unsigned char isGetAppData = 0;
 unsigned long g_totalBytes = 0; // 记录一共多少字节
 
+int crc = 0;
+
 void Led_Init(void)
 {
 	TRISCbits.TRISC6 = 0;
@@ -112,21 +114,30 @@ void Led_Init(void)
  */
 void main(void)
 {   
+	UINT16 totalNums = 0;
+    UINT16 totalCrc = 0;
+    UINT16 calcCRC = 0;
+    UINT16 needReadTimes = 0;
+    UINT8  readLastNum = 0;
+    
     unsigned char goApp = 1;
     OSC_Init();  /* 初始化系统时钟 */
     SystemInit();  
     Led_Init();
     
-    g_flashAddr = APP_START;
- 
+    g_flashAddr = APP_HEADER;
+    
     //取出App头64字节
     for(int i=0;i<64;i++)
     {
-        g_Data[i] = flashRdOneBytes(APP_HEADER);
+        g_Data[i] = flashRdOneBytes(g_flashAddr++);
     }
-    
-	for(int i=0;i<64;i++)
-    {
+
+	totalNums =  (g_Data[1]<<8) + g_Data[0];
+	totalCrc = (g_Data[3]<<8) + g_Data[2];
+ #if 0   
+	for(int i=4;i<64;i++)
+    {	
         if(0xAA == g_Data[i])
         { 
             goApp = 1;
@@ -138,6 +149,30 @@ void main(void)
             break;
         }
     }
+#endif
+	needReadTimes = totalNums/64;
+	readLastNum = totalNums%64;
+    g_flashAddr = APP_START;
+	for(int i=0;i<needReadTimes;i++)
+	{
+		for(int j=0;j<64;j++)
+	    {
+	        g_Data[j] = flashRdOneBytes(g_flashAddr++);
+	    }
+	    calcCRC = ComputeCrc16(g_Data, calcCRC, 64);
+	}
+	for(int j=0;j<readLastNum;j++)
+    {
+        g_Data[j] = flashRdOneBytes(g_flashAddr++);
+    }
+    calcCRC = ComputeCrc16(g_Data, calcCRC, readLastNum);
+
+    if(calcCRC == totalCrc)
+    {
+		goApp = 1;
+    }
+    else
+    	goApp = 0;
 	
     //红灯点亮，没有进入App
     if(goApp == 1)
@@ -152,6 +187,7 @@ void main(void)
         LedGre = 1;
         isGetAppData = 0;
     }
+    g_flashAddr = APP_START;
     
 	for (;;)
 	{

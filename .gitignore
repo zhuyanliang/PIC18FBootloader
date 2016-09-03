@@ -52,6 +52,20 @@
 *.properties
 *.bash
 
+#source insight
+*.IAB
+*.IAD
+*.IMB
+*.IMD
+*.PFI
+*.PO
+*.PR
+*.PRI
+*.PS
+*.SearchResults
+*WK3
+
+
 # Debug files
 *.dSYM/
 *.su
