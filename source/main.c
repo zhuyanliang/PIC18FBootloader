@@ -10,24 +10,24 @@
 // CONFIG1L
 #pragma config RETEN = OFF      // VREG Sleep Enable bit (Ultra low-power regulator is Disabled (Controlled by REGSLP bit))
 #pragma config INTOSCSEL = LOW // LF-INTOSC Low-power Enable bit (LF-INTOSC in High-power mode during Sleep)
-#pragma config SOSCSEL = HIGH   // SOSC Power Selection and mode Configuration bits (High Power SOSC circuit selected)
+#pragma config SOSCSEL = DIG   // SOSC Power Selection and mode Configuration bits (High Power SOSC circuit selected)
 #pragma config XINST = OFF       // Extended Instruction Set (Enabled)
 
 // CONFIG1H
 #pragma config FOSC = INTIO2    // Oscillator (Internal RC oscillator)
-#pragma config PLLCFG = OFF     // PLL x4 Enable bit (Disabled)
-#pragma config FCMEN = OFF      // Fail-Safe Clock Monitor (Disabled)
+#pragma config PLLCFG = ON     // PLL x4 Enable bit (Disabled)
+#pragma config FCMEN = ON      // Fail-Safe Clock Monitor (Disabled)
 #pragma config IESO = OFF       // Internal External Oscillator Switch Over Mode (Disabled)
 
 // CONFIG2L
 #pragma config PWRTEN = OFF     // Power Up Timer (Disabled)
 #pragma config BOREN = SBORDIS  // Brown Out Detect (Enabled in hardware, SBOREN disabled)
-#pragma config BORV = 3         // Brown-out Reset Voltage bits (1.8V)
-#pragma config BORPWR = ZPBORMV // BORMV Power level (ZPBORMV instead of BORMV is selected)
+#pragma config BORV = 0         
+#pragma config BORPWR = LOW 
 
 // CONFIG2H
-#pragma config WDTEN = SWDTDIS  // Watchdog Timer (WDT enabled in hardware; SWDTEN bit disabled)
-#pragma config WDTPS = 1048576  // Watchdog Postscaler (1:1048576)
+#pragma config WDTEN = ON  // Watchdog Timer (WDT enabled in hardware; SWDTEN bit disabled)
+#pragma config WDTPS = 65536  // Watchdog Postscaler (1:1048576)
 
 // CONFIG3H
 #pragma config CANMX = PORTB    // ECAN Mux bit (ECAN TX and RX pins are located on RB2 and RB3, respectively)
@@ -135,21 +135,7 @@ void main(void)
 
 	totalNums =  (g_Data[1]<<8) + g_Data[0];
 	totalCrc = (g_Data[3]<<8) + g_Data[2];
- #if 0   
-	for(int i=4;i<64;i++)
-    {	
-        if(0xAA == g_Data[i])
-        { 
-            goApp = 1;
-            continue;
-        }
-        else
-        {
-            goApp = 0;
-            break;
-        }
-    }
-#endif
+
 	needReadTimes = totalNums/64;
 	readLastNum = totalNums%64;
     g_flashAddr = APP_START;
@@ -172,7 +158,9 @@ void main(void)
 		goApp = 1;
     }
     else
-    	goApp = 0;
+	{
+		goApp = 0;
+	}
 	
     //红灯点亮，没有进入App
     if(goApp == 1)

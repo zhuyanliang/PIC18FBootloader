@@ -16,30 +16,10 @@ extern "C" {
 #include <stdlib.h>
 #include <xc.h>
 #include <plib.h>
-#include "crc8.h"
+#include "crc.h"
 #include "ecan.h"
 #include "taskcan.h"
 #include "flash.h"
-    
-typedef enum 
-{
-   WAITING = 0,
-   PROGRAMING               
-}SystemModeDef;      
-    
-typedef struct
-{
-   UINT16 ImageBytes;                   // # of bytes in AppImage
-   UINT16 ImageCrc;                     // 16 bit CRC value
-   UINT16 ImageId;                      // Image Id
-   UINT8  FwMajRev;                     // Firmware Major Revision #
-   UINT8  FwMinRev;                     // Firmware Minor Revision #
-   UINT8  FwBuild;                      // Firmware build # (16 bit)
-   UINT8  HwMajRev;                     // Hardware Major Revision #
-   UINT8  HwMinRev;                     // Hardware Minor Revision #
-   UINT8  Padding[53];                  // Pad to 64 bytes
-} appHeader; 
-
     
 #define Fosc            64000000    //系统时钟频率64MHz     
 #define APP_HEADER    	0x2000

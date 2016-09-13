@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include "crc8.h"
+#include "crc.h"
 
 /*-------------- CRC lookup table --------------*/
 static UINT8 const Crc8Table[256] = 
