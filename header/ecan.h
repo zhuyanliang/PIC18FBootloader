@@ -16,7 +16,7 @@
 #define CAN_RTR_DATA                ((UINT8)0x00)        // Êý¾ÝÖ¡        
 #define CAN_RTR_REMOTE              ((UINT8)0x40)        // Ô¶³ÌÖ¡
 
-#define CAN_BAUDRATE                (250)         //ECAN bitrate define
+#define CAN_BAUDRATE                (125)         //ECAN bitrate define
 
 //CAN message structure definition  
 typedef struct
@@ -31,7 +31,6 @@ typedef struct
 void ECAN_Init(void);
 UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage);
 UINT8 ECAN_ReceiveMsg(CanMsgTypedef* RxMessage);
-
 
 #ifdef __cplusplus
 }
