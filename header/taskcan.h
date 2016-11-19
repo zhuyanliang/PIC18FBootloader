@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-void SendResponse(UINT8 dat);
+void SendResponse(unsigned char dat);
 
 void CAN_ReceiveImage(void); 
 

@@ -5,7 +5,7 @@
  * Created on 2016年7月27日, 上午11:39
  */
 
-#include "common.h"
+#include "include.h"
 
 // CONFIG1L
 #pragma config RETEN = OFF      // VREG Sleep Enable bit (Ultra low-power regulator is Disabled (Controlled by REGSLP bit))
@@ -83,7 +83,7 @@ CanMsgTypedef 	g_CanTxBuf;
 CanMsgTypedef 	g_CanRxBuf;
 
 void SystemInit(void);
-UINT8 Image_Verify_crc16(void);
+unsigned char Image_Verify_crc16(void);
 void Timer_Init(void);
 void OSC_Init(void);
 void ISR_Init(void);
@@ -114,14 +114,14 @@ void Led_Init(void)
  */
 void main(void)
 {   
-	UINT16 totalNums = 0;
-    UINT16 totalCrc = 0;
-    UINT16 calcCRC = 0;
-    UINT16 needReadTimes = 0;
-    UINT8  readLastNum = 0;
+	unsigned short totalNums = 0;
+    unsigned short totalCrc = 0;
+    unsigned short calcCRC = 0;
+    unsigned short needReadTimes = 0;
+    unsigned char  readLastNum = 0;
     
     unsigned char goApp = 1;
-    OSC_Init();  /* 初始化系统时钟 */
+    OSC_Init();  	
     SystemInit();  
     Led_Init();
     
@@ -180,7 +180,7 @@ void main(void)
 	for (;;)
 	{
         if(!isGetAppData)
-            SendResponse(CAN_MSG_IMAGE_REQUEST);// 发送请求APP下载
+            SendResponse(CAN_MSG_IMAGE_REQUEST); // 发送请求APP下载
 		CAN_CompressData();		
 	} 
     

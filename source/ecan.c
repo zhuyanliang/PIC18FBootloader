@@ -12,7 +12,7 @@
 //  Comment     £º
 //============================================================================
 
-#include "common.h"
+#include "include.h"
 
 CanMsgTypedef g_CanTxBuf;
 CanMsgTypedef g_CanRxBuf;
@@ -132,25 +132,25 @@ void ECAN_Init()
 // Parameters  £º
 // Returns     £º
 //----------------------------------------------------------------------------
-UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
+unsigned char ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
 {
-   UINT8 i, *ptr;
+   unsigned char i, *ptr;
 
    //Select one empty transmit mailbox
    if (!TXB0CONbits.TXREQ)
    {       
       if (TxMessage->IDE == CAN_ID_STD)  //Set up the standar Id
       {
-         TXB0SIDH = (UINT8)(TxMessage->COB_ID >> 3);
-         TXB0SIDL = (UINT8)(TxMessage->COB_ID << 5);
+         TXB0SIDH = (unsigned char)(TxMessage->COB_ID >> 3);
+         TXB0SIDL = (unsigned char)(TxMessage->COB_ID << 5);
       }
       else  //Set up the extend Id
       {
-         TXB0SIDH = (UINT8)(TxMessage->COB_ID >> 21);
-         TXB0SIDL = ((UINT8)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
-                    ((UINT8)(TxMessage->COB_ID >> 16) & 0x03);
-         TXB0EIDH = (UINT8)(TxMessage->COB_ID >> 8);
-         TXB0EIDL = (UINT8)TxMessage->COB_ID;         
+         TXB0SIDH = (unsigned char)(TxMessage->COB_ID >> 21);
+         TXB0SIDL = ((unsigned char)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
+                    ((unsigned char)(TxMessage->COB_ID >> 16) & 0x03);
+         TXB0EIDH = (unsigned char)(TxMessage->COB_ID >> 8);
+         TXB0EIDL = (unsigned char)TxMessage->COB_ID;         
       }
        
       if (TxMessage->RTR == CAN_RTR_DATA)
@@ -158,7 +158,7 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
          TXB0DLCbits.TXRTR = 0;
          TXB0DLCbits.DLC = TxMessage->DLC;  //Set up the DLC
 
-         ptr = (UINT8*)0x0F26;  //address of TXB0D0
+         ptr = (unsigned char*)0x0F26;  //address of TXB0D0
 
          for (i=0;i<TxMessage->DLC;i++)
          {
@@ -176,16 +176,16 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
    {
       if (TxMessage->IDE == CAN_ID_STD)  //Set up the standar Id
       {
-         TXB1SIDH = (UINT8)(TxMessage->COB_ID >> 3);
-         TXB1SIDL = (UINT8)(TxMessage->COB_ID << 5);
+         TXB1SIDH = (unsigned char)(TxMessage->COB_ID >> 3);
+         TXB1SIDL = (unsigned char)(TxMessage->COB_ID << 5);
       }
       else  //Set up the extend Id
       {
-         TXB1SIDH = (UINT8)(TxMessage->COB_ID >> 21);
-         TXB1SIDL = ((UINT8)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
-                    ((UINT8)(TxMessage->COB_ID >> 16) & 0x03);
-         TXB1EIDH = (UINT8)(TxMessage->COB_ID >> 8);
-         TXB1EIDL = (UINT8)TxMessage->COB_ID;
+         TXB1SIDH = (unsigned char)(TxMessage->COB_ID >> 21);
+         TXB1SIDL = ((unsigned char)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
+                    ((unsigned char)(TxMessage->COB_ID >> 16) & 0x03);
+         TXB1EIDH = (unsigned char)(TxMessage->COB_ID >> 8);
+         TXB1EIDL = (unsigned char)TxMessage->COB_ID;
       }
        
       if (TxMessage->RTR == CAN_RTR_DATA)
@@ -193,7 +193,7 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
          TXB1DLCbits.TXRTR = 0; 
          TXB1DLCbits.DLC = TxMessage->DLC;  //Set up the DLC
 
-         ptr = (UINT8*)0x0F16;  //address of TXB1D0
+         ptr = (unsigned char*)0x0F16;  //address of TXB1D0
 
          for (i=0;i<TxMessage->DLC;i++)
          {
@@ -211,16 +211,16 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
    {
       if (TxMessage->IDE == CAN_ID_STD)  //Set up the standar Id
       {
-         TXB2SIDH = (UINT8)(TxMessage->COB_ID >> 3);
-         TXB2SIDL = (UINT8)(TxMessage->COB_ID << 5);
+         TXB2SIDH = (unsigned char)(TxMessage->COB_ID >> 3);
+         TXB2SIDL = (unsigned char)(TxMessage->COB_ID << 5);
       }
       else  //Set up the extend Id
       {
-         TXB2SIDH = (UINT8)(TxMessage->COB_ID >> 21);
-         TXB2SIDL = ((UINT8)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
-                    ((UINT8)(TxMessage->COB_ID >> 16) & 0x03);
-         TXB2EIDH = (UINT8)(TxMessage->COB_ID >> 8);
-         TXB2EIDL = (UINT8)TxMessage->COB_ID;
+         TXB2SIDH = (unsigned char)(TxMessage->COB_ID >> 21);
+         TXB2SIDL = ((unsigned char)(TxMessage->COB_ID >> 13) & 0xE0) | 0x08 | 
+                    ((unsigned char)(TxMessage->COB_ID >> 16) & 0x03);
+         TXB2EIDH = (unsigned char)(TxMessage->COB_ID >> 8);
+         TXB2EIDL = (unsigned char)TxMessage->COB_ID;
       }
        
       if (TxMessage->RTR == CAN_RTR_DATA)
@@ -228,7 +228,7 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
          TXB2DLCbits.TXRTR = 0; 
          TXB2DLCbits.DLC = TxMessage->DLC;  //Set up the DLC
 
-         ptr = (UINT8*)0x0F06;  //address of TXB2D0
+         ptr = (unsigned char*)0x0F06;  //address of TXB2D0
 
          for (i=0;i<TxMessage->DLC;i++)
          {
@@ -255,24 +255,24 @@ UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage)
 // Parameters  £º  
 // Returns     £ºnone
 //----------------------------------------------------------------------------
-UINT8 ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
+unsigned char ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
 {
-   UINT8 i, *ptr;
+   unsigned char i, *ptr;
 
    if (RXB0CONbits.RXFUL)
    {
-      ptr = (UINT8*)0x0F66;
+      ptr = (unsigned char*)0x0F66;
       RxMessage->IDE = RXB0SIDL & 0x08;
 
       if (!RxMessage->IDE)
       {
-         RxMessage->COB_ID = (((UINT32)RXB0SIDH<<8)|((UINT32)RXB0SIDL&0xE0))>>5;
+         RxMessage->COB_ID = (((unsigned long)RXB0SIDH<<8)|((unsigned long)RXB0SIDL&0xE0))>>5;
       }
       else
       {
-         RxMessage->COB_ID = ((UINT32)RXB0SIDH<<21)|(((UINT32)RXB0SIDL&0xE0)<<13)
-                            |(((UINT32)RXB0SIDL&0x03)<<16)
-                            |((UINT32)RXB0EIDH<<8) |((UINT32)RXB0EIDL);   
+         RxMessage->COB_ID = ((unsigned long)RXB0SIDH<<21)|(((unsigned long)RXB0SIDL&0xE0)<<13)
+                            |(((unsigned long)RXB0SIDL&0x03)<<16)
+                            |((unsigned long)RXB0EIDH<<8) |((unsigned long)RXB0EIDL);   
       }
       
       RxMessage->RTR = RXB0DLC & 0x40;
@@ -291,17 +291,17 @@ UINT8 ECAN_ReceiveMsg(CanMsgTypedef* RxMessage)
    }
 /*   else if (RXB1CONbits.RXFUL)
    {
-      ptr = (uint8_t*)0x0F36;
+      ptr = (unsigned char*)0x0F36;
       RxMessage->IDE = RXB1SIDL & 0x08;
 
       if (!RxMessage->IDE)
       {
-         RxMessage->COB_ID = (((uint32_t)RXB1SIDH<<8)|((uint32_t)RXB1SIDL&0xE0))>>5;   
+         RxMessage->COB_ID = (((unsigned long)RXB1SIDH<<8)|((unsigned long)RXB1SIDL&0xE0))>>5;   
       }
       else
       {
-         RxMessage->COB_ID = ((uint32_t)RXB1SIDH<<21)|(((uint32_t)RXB1SIDL&0xE0)<<13)|(((uint32_t)RXB1SIDL&0x03)<<16)|
-                            ((uint32_t)RXB1EIDH<<8) |((uint32_t)RXB1EIDL);           
+         RxMessage->COB_ID = ((unsigned long)RXB1SIDH<<21)|(((unsigned long)RXB1SIDL&0xE0)<<13)|(((unsigned long)RXB1SIDL&0x03)<<16)|
+                            ((unsigned long)RXB1EIDH<<8) |((unsigned long)RXB1EIDL);           
       }
       
       RxMessage->RTR = RXB1DLC & 0x40;

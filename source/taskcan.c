@@ -1,15 +1,4 @@
-#include "common.h"
-
-//----------------------------------------------------------------------------
-// Function    ：CAN_ExtractSourceAddress
-// Description ：从CAN ID中提取发送节点的源地址.
-// Parameters  ：
-// Returns     ：
-//----------------------------------------------------------------------------
-UINT8 CAN_ProtAnal_SA(UINT32 can_id)
-{
-   return((UINT8)can_id);
-}
+#include "include.h"
 
 //----------------------------------------------------------------------------
 // Function    ：CAN_ExtractFunctionCode
@@ -17,11 +6,11 @@ UINT8 CAN_ProtAnal_SA(UINT32 can_id)
 // Parameters  ：
 // Returns     ：
 //----------------------------------------------------------------------------
-UINT8 CAN_ProtAnal_FC(UINT32 can_id)
+unsigned char CAN_ProtAnal_FC(unsigned long can_id)
 {
-	UINT8 temp;
+	unsigned char temp;
 
-	temp = (UINT8)(can_id >> 16);
+	temp = (unsigned char)(can_id >> 16);
 	return(temp);
 }
 
@@ -32,15 +21,15 @@ UINT8 CAN_ProtAnal_FC(UINT32 can_id)
 // Parameters  ：
 // Returns     ：
 //----------------------------------------------------------------------------
-UINT32 CAN_Generate_ID(UINT8 msg_fc, UINT8 crc)
+unsigned long CAN_Generate_ID(unsigned char msg_fc, unsigned char crc)
 {
-	UINT32 temp = 0;
+	unsigned long temp = 0;
 
-	temp = ((UINT32)msg_fc << 16) + ((UINT32)crc << 8) + BMS;
+	temp = ((unsigned long)msg_fc << 16) + ((unsigned long)crc << 8) + BMS;
 	return(temp);
 }
 
-void SendResponse(UINT8 dat)
+void SendResponse(unsigned char dat)
 {
     g_CanTxBuf.COB_ID = 0;
     g_CanTxBuf.DLC = 0;
@@ -52,43 +41,18 @@ void SendResponse(UINT8 dat)
     ECAN_TransmitMsg(&g_CanTxBuf);
 }
 
-//----------------------------------------------------------------------------
-// Function    : CAN_Request_Image
-// Description : 发送远程帧向上位机请求用户app
-// Parameters  : none
-// Returns     : none
-//----------------------------------------------------------------------------
-void CAN_Request_Image(void)
-{
-	g_CanTxBuf.COB_ID = CAN_Generate_ID(GUI, CAN_MSG_IMAGE_REQUEST);
-	g_CanTxBuf.IDE = CAN_ID_EXT;
-	g_CanTxBuf.RTR = CAN_RTR_DATA;
-	g_CanTxBuf.DLC = 0x08;
-
-	g_CanTxBuf.Data[0] = 0x01;
-	g_CanTxBuf.Data[1] = 0x23;
-	g_CanTxBuf.Data[2] = 0x45;
-	g_CanTxBuf.Data[3] = 0x67;
-	g_CanTxBuf.Data[4] = 0x89;
-	g_CanTxBuf.Data[5] = 0xAB;
-	g_CanTxBuf.Data[6] = 0xCD;
-	g_CanTxBuf.Data[7] = 0xEF;
-
-	ECAN_TransmitMsg(&g_CanTxBuf);
-}
-
 void CAN_ReceiveImage(void)
 {
-    static UINT8 i = 0;
-    static UINT8 len = 0;
-    static UINT16 crc = 0;
-    static UINT8 getNextFrame = 0;
-    static UINT8 getCrc = 0;
+    static unsigned char i = 0;
+    static unsigned char len = 0;
+    static unsigned short crc = 0;
+    static unsigned char getNextFrame = 0;
+    static unsigned char getCrc = 0;
     
     getCrc = (unsigned char)((g_CanRxBuf.COB_ID >>8)&0xFF);
     len = g_CanRxBuf.DLC;
     if(len>0)
-        crc = calculate_crc8((UINT8*)&g_CanRxBuf.Data[0],len);
+        crc = calculate_crc8((unsigned char*)&g_CanRxBuf.Data[0],len);
     
     if(getCrc == crc)
     {
@@ -123,17 +87,15 @@ void CAN_ReceiveImage(void)
     }
     else
     {
-        int i = 0;
-        i++;
         SendResponse(CAN_MSG_REQ_AGAIN);
     }
 }
 
 void CAN_ReceiveOver(void)
 {
-	UINT16 crc = 0;
-    UINT8 getCrc = 0;
-    UINT8 len = 0;
+	unsigned short crc = 0;
+    unsigned char getCrc = 0;
+    unsigned char len = 0;
     
     while(g_FlashIndex < 64)
     {
@@ -146,7 +108,7 @@ void CAN_ReceiveOver(void)
 	getCrc = (unsigned char)((g_CanRxBuf.COB_ID >>8)&0xFF);
     len = g_CanRxBuf.DLC;
     if(len>0)
-        crc = calculate_crc8((UINT8*)&g_CanRxBuf.Data[0],len);
+        crc = calculate_crc8((unsigned char*)&g_CanRxBuf.Data[0],len);
     
     if(getCrc == crc)
     {
@@ -181,37 +143,33 @@ void CAN_CompressData(void)
         
         switch(can_fc)
         {
-            case CAN_MSG_IMAGE_ERASE:
+        case CAN_MSG_IMAGE_ERASE:
+        {
+            flashErase64Bytes(APP_HEADER);
+            for(int i=0;i<64;i++)
             {
-                flashErase64Bytes(APP_HEADER);
-                for(int i=0;i<64;i++)
+                if(0xFF == flashRdOneBytes(APP_HEADER+i))
+                    continue;
+                else 
                 {
-                    if(0xFF == flashRdOneBytes(APP_HEADER+i))
-                        continue;
-                    else 
-                    {
-                        SendResponse(CAN_MSG_REQ_AGAIN);  
-                        break;
-                    }
+                    SendResponse(CAN_MSG_REQ_AGAIN);  
+                    break;
                 }
-                SendResponse(CAN_MSG_REQ_NEXT);
-                isGetAppData = 1;
             }
-            break;
-            case CAN_MSG_IMAGE_LOAD:
-            CAN_ReceiveImage();
-            break;
-            case CAN_MSG_OVER_LOAD:
-            CAN_ReceiveOver();
-            break;
-            default:
-            break;
+            SendResponse(CAN_MSG_REQ_NEXT);
+            isGetAppData = 1;
         }
-
-       
+        	break;
+        case CAN_MSG_IMAGE_LOAD:
+        	CAN_ReceiveImage();
+        	break;
+        case CAN_MSG_OVER_LOAD:
+        	CAN_ReceiveOver();
+        	break;
+        default:
+        	break;
+        }
     }
-    
-    
 }
 
 

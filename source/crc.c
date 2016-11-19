@@ -1,9 +1,7 @@
-#include "common.h"
-
-#include "crc.h"
+#include "include.h"
 
 /*-------------- CRC lookup table --------------*/
-static UINT8 const Crc8Table[256] = 
+static unsigned char const Crc8Table[256] = 
 { 
    0x00,0x07,0x0E,0x09,0x1C,0x1B,0x12,0x15,
    0x38,0x3F,0x36,0x31,0x24,0x23,0x2A,0x2D,
@@ -40,7 +38,7 @@ static UINT8 const Crc8Table[256] =
 };
 
 // crc16校验计算查找表
-const UINT16 Crc16Table[256] = 
+const unsigned short Crc16Table[256] = 
 {
    0x0000,0xc0c1,0xc181,0x0140,0xc301,0x03c0,0x0280,0xc241,
    0xc601,0x06c0,0x0780,0xc741,0x0500,0xc5c1,0xc481,0x0440,
@@ -83,24 +81,13 @@ const UINT16 Crc16Table[256] =
 // Parameters:  *ptr,len
 // Returns:     crc value
 //----------------------------------------------------------------------------
-UINT8 calculate_crc8(UINT8* ptr, UINT8 len)
+unsigned char calculate_crc8(unsigned char* ptr, unsigned char len)
 {
-   UINT8 crc = 0;
+   unsigned char crc = 0;
 
    while(len--)
       crc = Crc8Table[crc ^ *ptr++];
    return crc;
-}
-
-//----------------------------------------------------------------------------
-// Function:    calculate_char_crc8
-// Description:  计算单个字符数值的CRC
-// Parameters:  crc,nbyte
-// Returns:     crc value
-//----------------------------------------------------------------------------
-UINT8 calculate_char_crc8(UINT8 crc, UINT8 nbyte)
-{
-   return(Crc8Table[crc ^ nbyte]);
 }
 
 
@@ -110,9 +97,9 @@ UINT8 calculate_char_crc8(UINT8 crc, UINT8 nbyte)
 // Parameters  ：
 // Returns     ：
 //============================================================================ 
-UINT16 ComputeCrc16(UINT8 *buffer, UINT16 lastcrc, UINT24 len)
+unsigned short ComputeCrc16(unsigned char *buffer, unsigned short lastcrc, unsigned short long len)
 {
-   UINT16 tmp = lastcrc;
+   unsigned short tmp = lastcrc;
 
    while (len--)
    {

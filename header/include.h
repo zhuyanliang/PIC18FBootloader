@@ -12,7 +12,14 @@
 extern "C" {
 #endif
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <xc.h>
+#include "crc.h"
+#include "ecan.h"
+#include "taskcan.h"
+#include "flash.h"
+#include "common.h"
 
 
 #ifdef	__cplusplus

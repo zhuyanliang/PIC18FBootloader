@@ -12,9 +12,12 @@
 extern "C" {
 #endif
     
-UINT8 calculate_crc8(UINT8* ptr, UINT8 len);
-UINT8 calculate_char_crc8(UINT8 crc, UINT8 nbyte);
-UINT16 ComputeCrc16(UINT8 *buffer, UINT16 lastcrc,UINT24 len);
+#include "include.h"   
+    
+    
+unsigned char calculate_crc8(unsigned char* ptr, unsigned char len);
+unsigned char calculate_char_crc8(unsigned char crc, unsigned char nbyte);
+unsigned short ComputeCrc16(unsigned char *buffer, unsigned short lastcrc,unsigned short long len);
 
 
 #ifdef	__cplusplus

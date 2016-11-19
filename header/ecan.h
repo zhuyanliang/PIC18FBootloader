@@ -10,27 +10,29 @@
    extern "C" {
 #endif
        
+#include "include.h"
+       
 // CAN消息帧类型定义
-#define CAN_ID_STD                  ((UINT8)0x00)        // 标准帧      
-#define CAN_ID_EXT                  ((UINT8)0x08)        // 扩展帧
-#define CAN_RTR_DATA                ((UINT8)0x00)        // 数据帧        
-#define CAN_RTR_REMOTE              ((UINT8)0x40)        // 远程帧
+#define CAN_ID_STD                  ((unsigned char)0x00)        // 标准帧      
+#define CAN_ID_EXT                  ((unsigned char)0x08)        // 扩展帧
+#define CAN_RTR_DATA                ((unsigned char)0x00)        // 数据帧        
+#define CAN_RTR_REMOTE              ((unsigned char)0x40)        // 远程帧
 
 #define CAN_BAUDRATE                (125)         //ECAN bitrate define
 
 //CAN message structure definition  
 typedef struct
 {
-   UINT32 COB_ID;
-   UINT8  IDE;
-   UINT8  RTR; 
-   UINT8  DLC;
-   UINT8  Data[8];
+   unsigned long COB_ID;
+   unsigned char  IDE;
+   unsigned char  RTR; 
+   unsigned char  DLC;
+   unsigned char  Data[8];
 } CanMsgTypedef;         
        
 void ECAN_Init(void);
-UINT8 ECAN_TransmitMsg(CanMsgTypedef* TxMessage);
-UINT8 ECAN_ReceiveMsg(CanMsgTypedef* RxMessage);
+unsigned char ECAN_TransmitMsg(CanMsgTypedef* TxMessage);
+unsigned char ECAN_ReceiveMsg(CanMsgTypedef* RxMessage);
 
 #ifdef __cplusplus
 }
